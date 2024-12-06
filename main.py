@@ -12,6 +12,7 @@ from nltk.util import ngrams
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.collocations import *
 import pymorphy3
+from collections import Counter
 # при первом запуске раскомментить
 # nltk.download('punkt_tab')
 # nltk.download('omw-1.4')
@@ -116,9 +117,9 @@ def gen_wordsForCloud():
   wordsForCloud = []
   for pair, freq in n2.most_common(100):
     words = ' '.join(pair)
-    wordsForCloud.append(words)
-
-  wordsForCloud = ','.join(wordsForCloud)
+    for i in range(freq):
+      wordsForCloud.append(words)
+    # wordsForCloud.append(words)
   return wordsForCloud
 
 # Генерируем облако слов
@@ -129,15 +130,18 @@ def generate_wordcloud(wordsForCloud):
   # Превращаем картинку в маску
   mask = np.array(Image.open('bird.jpg'))
 
+  word_cloud_lst = Counter(wordsForCloud)
+  print(word_cloud_lst)
+
   wordcloud = WordCloud(width=2000,
                         height=1500,
                         random_state=1,
                         background_color='white',
                         colormap='Set2',
                         collocation_threshold = 3,
-                      #   collocations=False,
+                        # collocations=False,
                         stopwords=STOPWORDS_RU,
-                        mask=mask).generate(wordsForCloud)
+                        mask=mask).generate_from_frequencies(word_cloud_lst)
   return wordcloud
 
 if __name__ == '__main__':
