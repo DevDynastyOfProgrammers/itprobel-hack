@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import unquote
 
 # URL страницы
-def get_links(query, num_pages=3):
+def get_links(query, num_pages=1):
     links = []
     for page in range(num_pages):
         start = page * 10 # сколько ссылок со страницы поиска возьмется
@@ -17,13 +18,17 @@ def get_links(query, num_pages=3):
             if parent and 'href' in parent.attrs:
                 url = parent['href']
                 border = url.find('&sa')
-                # print(url[7:border])
-                links.append(url[7:border])
+                # убираем лишние данные из url
+                url = unquote(url[7:border])
+                links.append(url)
 
     return links  # Возвращаем первые 5 ссылок
 
-user_query = "туристические места Архангельская область"
-urls = get_links(user_query)
+# user_query = "туристические места Архангельская область"
+# user_query = "Архангельская область природные достопримечательности"
+user_query = "Архангельская область отзывы у путешествии по региону"
+urls = get_links(user_query, 2)
+print(len(urls))
 # for url in urls:
 #     print(url)
 

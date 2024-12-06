@@ -14,6 +14,7 @@ from nltk.collocations import *
 from nltk.tokenize import RegexpTokenizer
 import pymorphy3
 from collections import Counter
+from math import sqrt, ceil
 # при первом запуске раскомментить
 # nltk.download('punkt_tab')
 # nltk.download('omw-1.4')
@@ -88,7 +89,7 @@ def __get_pairs_n(all_counts):
     else:
       # выбираем оставляем неподходящие словосочетания или пропускаем
       continue
-      # norm_pairs.append((pair, freq))
+      # norm_pairs.append(((first, second), freq))
   return norm_pairs
 
 morph = pymorphy3.MorphAnalyzer()
@@ -111,14 +112,18 @@ n2 = get_pairs_n(result_string, 2)
 
 def gen_wordsForCloud():
   wordsForCloud = []
-  for pair, freq in n2.most_common(100):
+  num = 100
+  for pair, freq in n2.most_common(num):
     try:
       words = ' '.join(pair)
     except:
       pair = (pair[0].word, pair[1].word)
       words = ' '.join(pair)
 
-    for i in range(freq):
+    # уменьшаем разброс, чтобы редкие словосочетания не были мелкими
+    new_freq = ceil(sqrt(freq))
+    
+    for i in range(new_freq):
       wordsForCloud.append(words)
     # wordsForCloud.append(words)
   return wordsForCloud
