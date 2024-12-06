@@ -12,6 +12,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pymorphy3
 
+# test text
+import codecs
+fileObj = codecs.open( "testText.txt", "r", "utf_8_sig" )
+result_string = fileObj.read() # или читайте по строке
+fileObj.close()
 
 result_string = re.sub(r'==.*?==+', '', result_string) # удаляем лишние символы
 result_string = result_string.replace('\n', '') # удаляем знаки разделения на абзацы
@@ -111,13 +116,16 @@ def get_pairs_n(text, n):
     return freq_norm_pairs
 
 n2 = get_pairs_n(result_string, 2)
-print(result_string)
-print(n2.most_common(20))
+# print(result_string)
+# print(n2.most_common(20))
 
-# wordsForCloud = []
-# for pair, freq in n2.most_common(10):
-#   wordsForCloud.append(pair)
-#   print(freq)
+wordsForCloud = []
+for pair, freq in n2.most_common(100):
+  words = ' '.join(pair)
+  wordsForCloud.append(words)
+
+wordsForCloud = ','.join(wordsForCloud)
+print(wordsForCloud)
 
 # Записываем в переменную стоп-слова русского языка
 STOPWORDS_RU = get_stop_words('russian')
@@ -131,9 +139,10 @@ wordcloud = WordCloud(width=2000,
                       random_state=1,
                       background_color='white',
                       colormap='Set2',
-                      collocations=False,
+                      collocation_threshold = 3,
+                    #   collocations=False,
                       stopwords=STOPWORDS_RU,
-                      mask=mask).generate(result_string)
+                      mask=mask).generate(wordsForCloud)
 
 
 # Выводим облако слов в картинку
