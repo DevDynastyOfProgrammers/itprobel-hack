@@ -17,16 +17,16 @@ def get_links(query):
             # print(url[7:border])
             links.append(url[7:border])
 
-    return links[:5]  # Возвращаем первые 5 ссылок
+    return links[:10]  # Возвращаем первые n ссылок
 
 user_query = "туристические места Архангельская область"
 urls = get_links(user_query)
-for url in urls:
-    print(url)
+# for url in urls:
+#     print(url)
 
 # "https://www.tourister.ru/responses/id_43115"
-urls = ["https://travel.yandex.ru/journal/arhangelskaya-oblast/",
-        "https://www.kp.ru/russia/arhangelsk/dostoprimechatelnosti/?ysclid=m4cnvuyibd964033673",]
+# urls = ["https://travel.yandex.ru/journal/arhangelskaya-oblast/",
+#         "https://www.kp.ru/russia/arhangelsk/dostoprimechatelnosti/?ysclid=m4cnvuyibd964033673",]
     
 def parse_from_web(url):
     response = requests.get(url)
@@ -35,6 +35,9 @@ def parse_from_web(url):
         response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         tag = soup.body
+
+        if tag == None:
+            return ''
 
         parse_text = ''
         for row in tag.strings:
@@ -52,4 +55,4 @@ def get_urls_review():
 result_string = ''
 for url in urls:
     result_string += parse_from_web(url)
-print(result_string)
+# print(result_string)

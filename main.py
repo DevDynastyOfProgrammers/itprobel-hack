@@ -11,6 +11,7 @@ from nltk import ngrams, FreqDist
 from nltk.util import ngrams
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.collocations import *
+from nltk.tokenize import RegexpTokenizer
 import pymorphy3
 from collections import Counter
 # при первом запуске раскомментить
@@ -30,7 +31,6 @@ nltk.download('stopwords')
 stop_words = stopwords.words('russian')
 stop_words.extend(['что', 'это', 'так', 'вот', 'быть', 'как', 'в', '—', 'к', 'на'])
 
-from nltk.tokenize import RegexpTokenizer
 def tokenize_text(text):
   # Удаление стоп слов
   tokenizer = RegexpTokenizer(r'\w+')
@@ -108,15 +108,16 @@ def get_pairs_n(text, n):
     return freq_norm_pairs
 
 n2 = get_pairs_n(result_string, 2)
-# слова до
-# print(result_string)
-# слова после, выводим 20 самых частых словосочетаний
-# print(n2.most_common(20))
 
 def gen_wordsForCloud():
   wordsForCloud = []
   for pair, freq in n2.most_common(100):
-    words = ' '.join(pair)
+    try:
+      words = ' '.join(pair)
+    except:
+      pair = (pair[0].word, pair[1].word)
+      words = ' '.join(pair)
+
     for i in range(freq):
       wordsForCloud.append(words)
     # wordsForCloud.append(words)
@@ -131,7 +132,10 @@ def generate_wordcloud(wordsForCloud):
   mask = np.array(Image.open('bird.jpg'))
 
   word_cloud_lst = Counter(wordsForCloud)
-  print(word_cloud_lst)
+  # print(word_cloud_lst)
+  print(len(word_cloud_lst))
+  for i in word_cloud_lst:
+    print(i)
 
   wordcloud = WordCloud(width=2000,
                         height=1500,
