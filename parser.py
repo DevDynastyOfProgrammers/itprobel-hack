@@ -2,31 +2,24 @@ import requests
 from bs4 import BeautifulSoup
 
 # URL страницы
-url = "https://travel.yandex.ru/journal/arhangelskaya-oblast/"
+urls = ["https://travel.yandex.ru/journal/arhangelskaya-oblast/",
+        "https://www.kp.ru/russia/arhangelsk/dostoprimechatelnosti/?ysclid=m4cnvuyibd964033673"]
+    
+def parse_from_web(url):
+    response = requests.get(url)
 
-# Отправляем GET-запрос на страницу
-response = requests.get(url)
+    if response.status_code == 200:
+        response.encoding = response.apparent_encoding
+        soup = BeautifulSoup(response.text, 'html.parser')
+        tag = soup.body
 
-# Проверяем, что запрос выполнен успешно
-if response.status_code == 200:
-    # Устанавливаем правильную кодировку
-    response.encoding = response.apparent_encoding
+        parse_text = ''
+        for row in tag.strings:
+            parse_text += row
+        return parse_text
+    else:
+        return ''
 
-    # Создаем объект BeautifulSoup для парсинга HTML
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Находим все теги <p>
-    paragraphs = soup.find_all('p')
-
-    # Извлекаем текст из каждого параграфа и объединяем их в одну строку
-    paragraph_texts = [para.get_text(strip=True) for para in paragraphs]
-    result_string = " ".join(paragraph_texts)  # Объединяем тексты с пробелами
-
-    # # Если надо записать результат в файл
-    # with open("output.txt", "w", encoding="utf-8") as file:
-    #     file.write(result_string)
-    #
-    # # Если надо вывести результат на экран
-    # print(paragraphs)
-else:
-    print(f"Ошибка при запросе страницы: {response.status_code}")
+result_string = ''
+for url in urls:
+    result_string += parse_from_web(url)

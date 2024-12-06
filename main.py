@@ -18,10 +18,10 @@ from collections import Counter
 # nltk.download('omw-1.4')
 # nltk.download('wordnet')
 
-import codecs
-fileObj = codecs.open( "testText.txt", "r", "utf_8_sig" )
-result_string = fileObj.read()
-fileObj.close()
+# import codecs
+# fileObj = codecs.open( "testText_big.txt", "r", "utf_8_sig" )
+# result_string = fileObj.read()
+# fileObj.close()
 
 result_string = re.sub(r'==.*?==+', '', result_string) # удаляем лишние символы
 result_string = result_string.replace('\n', '') # удаляем знаки разделения на абзацы
