@@ -2,22 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 
 # URL страницы
-def get_links(query):
-    url = f'https://www.google.com/search?q={query}'
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
+def get_links(query, num_pages=3):
     links = []
-    for item in soup.find_all('h3'):
-        parent = item.find_parent('a')
-        if parent and 'href' in parent.attrs:
-            url = parent['href']
-            border = url.find('&sa')
-            # print(url[7:border])
-            links.append(url[7:border])
+    for page in range(num_pages):
+        start = page * 10 # сколько ссылок со страницы поиска возьмется
+        url = f'https://www.google.com/search?q={query}&start={start}'
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers)
 
-    return links[:5]  # Возвращаем первые 5 ссылок
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        for item in soup.find_all('h3'):
+            parent = item.find_parent('a')
+            if parent and 'href' in parent.attrs:
+                url = parent['href']
+                border = url.find('&sa')
+                # print(url[7:border])
+                links.append(url[7:border])
+
+    return links
 
 user_query = "туристические места Архангельская область"
 urls = get_links(user_query)
@@ -35,6 +38,8 @@ def parse_from_web(url):
         response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         tag = soup.body
+        if tag is None:
+            return ''
 
         parse_text = ''
         for row in tag.strings:
