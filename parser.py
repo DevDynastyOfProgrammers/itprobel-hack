@@ -2,28 +2,31 @@ import requests
 from bs4 import BeautifulSoup
 
 # URL страницы
-def get_links(query, num_pages=3):
-    links = []
-    for page in range(num_pages):
-        start = page * 10 # сколько ссылок со страницы поиска возьмется
-        url = f'https://www.google.com/search?q={query}&start={start}'
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url, headers=headers)
+def get_links(queries, num_pages=2):
+    all_links = set()
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+    for query in queries:
+        for page in range(num_pages):
+            start = page * 10  # сколько ссылок со страницы поиска возьмется
+            url = f'https://www.google.com/search?q={query}&start={start}'
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            response = requests.get(url, headers=headers)
 
-        for item in soup.find_all('h3'):
-            parent = item.find_parent('a')
-            if parent and 'href' in parent.attrs:
-                url = parent['href']
-                border = url.find('&sa')
-                # print(url[7:border])
-                links.append(url[7:border])
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-    return links  # Возвращаем первые 5 ссылок
+            for item in soup.find_all('h3'):
+                parent = item.find_parent('a')
+                if parent and 'href' in parent.attrs:
+                    url = parent['href']
+                    border = url.find('&sa')
+                    all_links.add(url[7:border])
 
-user_query = "туристические места Архангельская область"
-urls = get_links(user_query)
+    return list(all_links)
+
+user_input = "Архангельская область"
+
+user_queries = ["туристические места " + user_input, "достопримечательности " + user_input]
+urls = get_links(user_queries)
 # for url in urls:
 #     print(url)
 
