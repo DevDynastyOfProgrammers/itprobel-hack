@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <title>TravelerGuide</title>
+  <link rel="icon" href="../static/img/icon.ico">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Viga&display=swap">
+</head>
+<body>
+  <div class="head">
+    <h1>TravelerGuide</h1>
+  </div>
+  <div class="container">
+    <div class="form">
+      <button class="enter" id="enter">Получить облако слов</button>
+    </div>
+    <div class="image">
+      <img src="../static/img/hp_cloud_simple.png" alt="Создаётся, подождите...">
+    </div>
+  </div>
+  <script>
+    var container = document.querySelector('.container');
+    var image = document.querySelector('.image');
+    var buttonOpen = document.querySelector('.enter')
+
+    document.querySelectorAll('.enter').forEach(button => {
+      button.addEventListener('click', () => {
+      
+        const data = { key: 'value' }; // Данные, которые вы хотите отправить
+
+        fetch('/trigger_function', {
+            method: 'POST', // Метод запроса
+            headers: {
+                'Content-Type': 'application/json', // Указываем тип контента
+            },
+            body: JSON.stringify(data), // Преобразуем данные в JSON
+        })
+        .then(data => {
+            console.log('Success:', data); // Обрабатываем данные ответа
+            container.style.height = "800px";
+        })
+        .catch(error => {
+            console.error('Error:', error); // Обрабатываем ошибки
+        });
+        })})
+        
+    // $('.enter').click(() => {
+    //   $.post('/trigger_function', data => {
+    //     container.style.height = "800px";
+    //     console.log(data);
+    //   });
+    // });
+  </script>
+</body>
+</html>

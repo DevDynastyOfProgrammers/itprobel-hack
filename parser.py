@@ -27,6 +27,6 @@ if response.status_code == 200:
     #     file.write(result_string)
     #
     # # Если надо вывести результат на экран
-    print(paragraphs)
+    # print(paragraphs)
 else:
     print(f"Ошибка при запросе страницы: {response.status_code}")

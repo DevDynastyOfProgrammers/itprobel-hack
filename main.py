@@ -119,31 +119,39 @@ n2 = get_pairs_n(result_string, 2)
 # print(result_string)
 # print(n2.most_common(20))
 
-wordsForCloud = []
-for pair, freq in n2.most_common(100):
-  words = ' '.join(pair)
-  wordsForCloud.append(words)
+def gen_wordsForCloud():
+  wordsForCloud = []
+  for pair, freq in n2.most_common(100):
+    words = ' '.join(pair)
+    wordsForCloud.append(words)
 
-wordsForCloud = ','.join(wordsForCloud)
-print(wordsForCloud)
+  wordsForCloud = ','.join(wordsForCloud)
+  return wordsForCloud
+# print(wordsForCloud)
 
-# Записываем в переменную стоп-слова русского языка
-STOPWORDS_RU = get_stop_words('russian')
-
-# Превращаем картинку в маску
-mask = np.array(Image.open('bird.jpg'))
 
 # Генерируем облако слов
-wordcloud = WordCloud(width=2000,
-                      height=1500,
-                      random_state=1,
-                      background_color='white',
-                      colormap='Set2',
-                      collocation_threshold = 3,
-                    #   collocations=False,
-                      stopwords=STOPWORDS_RU,
-                      mask=mask).generate(wordsForCloud)
+def generate_wordcloud(wordsForCloud):
+  # Записываем в переменную стоп-слова русского языка
+  STOPWORDS_RU = get_stop_words('russian')
+  
+  # Превращаем картинку в маску
+  mask = np.array(Image.open('bird.jpg'))
 
+  wordcloud = WordCloud(width=2000,
+                        height=1500,
+                        random_state=1,
+                        background_color='white',
+                        colormap='Set2',
+                        collocation_threshold = 3,
+                      #   collocations=False,
+                        stopwords=STOPWORDS_RU,
+                        mask=mask).generate(wordsForCloud)
+  return wordcloud
 
-# Выводим облако слов в картинку
-wordcloud.to_file('hp_cloud_simple.png')
+if __name__ == '__main__':
+  wordsForCloud = gen_wordsForCloud()
+  wordcloud = generate_wordcloud(wordsForCloud)
+
+  # Выводим облако слов в картинку
+  wordcloud.to_file('hp_cloud_simple.png')
