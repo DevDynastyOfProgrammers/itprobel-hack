@@ -3,32 +3,35 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
 # URL страницы
-def get_links(query, num_pages=1):
-    links = []
-    for page in range(num_pages):
-        start = page * 10 # сколько ссылок со страницы поиска возьмется
-        url = f'https://www.google.com/search?q={query}&start={start}'
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url, headers=headers)
+def get_links(queries, num_pages=2):
+    all_links = set()
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+    for query in queries:
+        for page in range(num_pages):
+            start = page * 10  # сколько ссылок со страницы поиска возьмется
+            url = f'https://www.google.com/search?q={query}&start={start}'
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            response = requests.get(url, headers=headers)
 
-        for item in soup.find_all('h3'):
-            parent = item.find_parent('a')
-            if parent and 'href' in parent.attrs:
-                url = parent['href']
-                border = url.find('&sa')
-                # убираем лишние данные из url
-                url = unquote(url[7:border])
-                links.append(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-    return links  # Возвращаем первые 5 ссылок
+            for item in soup.find_all('h3'):
+                parent = item.find_parent('a')
+                if parent and 'href' in parent.attrs:
+                    url = parent['href']
+                    border = url.find('&sa')
 
-# user_query = "туристические места Архангельская область"
-# user_query = "Архангельская область природные достопримечательности"
-user_query = "Архангельская область отзывы у путешествии по региону"
-urls = get_links(user_query, 2)
-print(len(urls))
+                    url = unquote(url[7:border])
+                    
+                    all_links.add(url)
+    
+    return list(all_links)
+
+user_input = "Архангельская область"
+
+
+user_queries = ["туристические места " + user_input, "достопримечательности " + user_input]
+urls = get_links(user_queries)
 # for url in urls:
 #     print(url)
 
